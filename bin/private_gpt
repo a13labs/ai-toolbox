@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# Build ollama (CUDA) and run it with podman for a specific LLM model
+# Requires podman, nvidia-container-toolkit, jq and python3
+
+# Usage: ./private_gpt.sh [start|stop|clean|restart|console]
+
+SCRIPTDIR=$(dirname $0)
+DATADIR=${PRIVATE_GPT_DATA_DIR:-$(realpath $SCRIPTDIR/../data)}
+DOCKERDIR=$(realpath $SCRIPTDIR/../docker)
+LIBDIR=$(realpath $SCRIPTDIR/../lib)
+
+source $LIBDIR/utils.sh
+source $LIBDIR/ollama.sh
+source $LIBDIR/private_gpt.sh
+
+function start_action {
+    podman_network_setup
+    ollama_run
+
+    if [ ! -d data/ollama/models/manifests/registry.ollama.ai/library/mistral ]; then
+        echo "Downloading required mistral model"
+        ollama_pull mistral
+    fi
+
+    if [ ! -d data/ollama/models/manifests/registry.ollama.ai/library/nomic-embed-text ]; then
+        echo "Downloading required mistral nomic-embed-text"
+        ollama_pull nomic-embed-text
+    fi    
+
+    private_gpt_run
+}
+
+function stop_action {
+    ollama_stop
+    private_gpt_stop
+}
+
+function clean_action {
+    ollama_clean
+    private_gpt_clean
+    podman_network_clean
+}
+
+ACTION=$1
+
+if [ -z $ACTION ]; then
+    echo "Usage: $0 [start|stop|clean]"
+    exit 1
+fi
+
+validate_requirements
+
+case $ACTION in
+    start)
+        start_action
+        ;;
+    stop)
+        stop_action
+        ;;
+    clean)
+        stop_action
+        clean_action
+        ;;
+    restart)
+        stop_action
+        start_action
+        ;;
+    console)
+        ollama_create
+        ollama_start
+        private_gpt_console
+        ollama_stop
+        ;;
+    *)
+        echo "Usage: $0 [start|stop|clean|restart|console]"
+        exit 1
+        ;;
+esac
+
+exit 0

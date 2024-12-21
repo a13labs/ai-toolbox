@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# Build ollama (CUDA) and run it with podman for a specific LLM model
+# Requires podman, nvidia-container-toolkit, jq and python3
+
+# Usage: ./ollam.sh [start|stop|clean|restart|pull]
+
+SCRIPTDIR=$(dirname $0)
+DATADIR=${OLLAMA_DATA_DIR:-$(realpath $SCRIPTDIR/../data)}
+DOCKERDIR=$(realpath $SCRIPTDIR/../docker)
+LIBDIR=$(realpath $SCRIPTDIR/../lib)
+
+source $LIBDIR/utils.sh
+source $LIBDIR/ollama.sh
+
+function start_action {
+    podman_network_setup
+    ollama_run
+}
+
+function stop_action {
+    ollama_stop
+}
+
+function clean_action {
+    ollama_clean
+    podman_network_clean
+}
+
+ACTION=$1
+
+if [ -z $ACTION ]; then
+    echo "Usage: $0 [start|stop|clean]"
+    exit 1
+fi
+
+validate_requirements
+
+case $ACTION in
+    pull)
+        if [ -z $1 ]; then
+            echo "Usage: $0 pull [model]"
+            return 1
+        fi
+
+        ollama_create
+        ollama_start
+        ollama_pull $2
+        ollama_stop
+        ;;
+    list)
+        ollama_list
+        ;;
+    log)
+        ollama_log $2
+        ;;
+    start)
+        start_action
+        ;;
+    stop)
+        stop_action
+        ;;
+    clean)
+        stop_action
+        clean_action
+        ;;
+    restart)
+        stop_action
+        start_action
+        ;;
+    log)
+        ;;
+    *)
+        echo "Usage: $0 [start|stop|clean|restart]"
+        exit 1
+        ;;
+esac
+
+exit 0
