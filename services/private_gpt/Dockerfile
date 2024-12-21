@@ -62,4 +62,3 @@ ENV PYTHONPATH="$PYTHONPATH:/home/worker/app/private_gpt/"
 ENV PGPT_PROFILES=ollama 
 
 ENTRYPOINT python -m private_gpt
-

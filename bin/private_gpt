@@ -7,7 +7,7 @@
 
 SCRIPTDIR=$(dirname $0)
 DATADIR=${PRIVATE_GPT_DATA_DIR:-$(realpath $SCRIPTDIR/../data)}
-DOCKERDIR=$(realpath $SCRIPTDIR/../docker)
+DOCKERDIR=$(realpath $SCRIPTDIR/../services/private_gpt)
 LIBDIR=$(realpath $SCRIPTDIR/../lib)
 
 source $LIBDIR/utils.sh
