@@ -1,0 +1,6 @@
+unet https://huggingface.co/city96/FLUX.1-dev-gguf/resolve/main/flux1-dev-Q3_K_S.gguf f65bb921fe637ba9588278f54981afc567be408e38ee038d2fe3acf3e11188bd  
+CLIPEncoder https://huggingface.co/city96/t5-v1_1-xxl-encoder-gguf/resolve/main/t5-v1_1-xxl-encoder-Q3_K_S.gguf 31ebe18e901bfb6e5709a20ec1c95fce29bce2b9545073231e0f909a53239f5c  
+CLIPEncoder https://huggingface.co/zer0int/CLIP-GmP-ViT-L-14/resolve/main/ViT-L-14-TEXT-detail-improved-hiT-GmP-TE-only-HF.safetensors eddcf5e2e2a88550aab21e04895e8ce4b2977e6c11dbbc7675b07927a3cda0dd  
+GFPGAN https://github.com/TencentARC/GFPGAN/releases/download/v1.3.4/GFPGANv1.4.pth e2cd4703ab14f4d01fd1383a8a8b266f9a5833dacee8e6a79d3bf21a1b6be5ad  
+RealESRGAN https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth 4fa0d38905f75ac06eb49a7951b426670021be3018265fd191d2125df9d682f1  
+RealESRGAN https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.2.4/RealESRGAN_x4plus_anime_6B.pth f872d837d3c90ed2e05227bed711af5671a6fd1c9f7d7e91c911a61f155e99da  

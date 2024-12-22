@@ -1,11 +1,13 @@
 OLLAMA_IMAGE="ollama/ollama:latest"
 
-function ollama_create {
+function ollama_create_dirs {
     mkdir -p $DATADIR/ollama
+}
 
+function ollama_create {
     if ! podman container exists ollama; then
         echo "Creating ollama container"
-        podman container create --name ollama -v ${DATADIR}/ollama:/root/.ollama \
+        podman container create -v ${DATADIR}/ollama:/root/.ollama \
                         -p 0.0.0.0:11434:11434 --network private_gpt \
                         --device nvidia.com/gpu=all --security-opt=label=disable \
                         --name ollama $OLLAMA_IMAGE

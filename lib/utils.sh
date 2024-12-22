@@ -28,17 +28,30 @@ function validate_requirements {
 }
 
 function podman_network_setup {
-    if ! podman network exists private_gpt; then
-        echo "Creating private_gpt network"
-        podman network create private_gpt
+    if ! podman network exists $1; then
+        echo "Creating $1 network"
+        podman network create $1
     fi
 }
 
 function podman_network_clean {
-    if ! podman network exists private_gpt; then
-        echo "private_gpt network not found"
+    if ! podman network exists $1; then
+        echo "$1 network not found"
     else
-        echo "Removing private_gpt network"
-        podman network rm private_gpt
+        echo "Removing $1 network"
+        podman network rm $1
     fi
+}
+
+function podman_image_exists {
+    podman image exists $1
+}
+
+function podman_container_exists {
+    podman container exists $1
+}
+
+function podman_build {
+    echo "Building $1"
+    podman build --force-rm --tag $1 $2
 }
