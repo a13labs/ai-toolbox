@@ -1,20 +1,12 @@
 FROM alpine:3.20
-ARG BUILD_DATE
-ARG VCS_REF
-LABEL org.label-schema.build-date=$BUILD_DATE \
-    org.label-schema.license=GPL-2.0 \
-    org.label-schema.name=proftpd \
-    org.label-schema.vcs-ref=$VCS_REF \
-    org.label-schema.vcs-url=https://github.com/instantlinux/docker-tools
 
 ARG PROFTPD_VERSION=1.3.8c-r0
 
 ENV ALLOW_OVERWRITE=on \
     ANONYMOUS_DISABLE=off \
     ANON_UPLOAD_ENABLE=DenyAll \
-    FTP_PASSWORD_SE=ftp-user-password-secret \
-    FTPUSER_NAME=ftpuser \
-    FTP_UID=1001 \
+    FTP_UID=1000 \
+    FTP_GID=1000 \
     LOCAL_UMASK=022 \
     MAX_CLIENTS=10 \
     MAX_INSTANCES=30 \
@@ -39,20 +31,20 @@ RUN chmod 644 /etc/proftpd/proftpd.conf && \
     proftpd=$PROFTPD_VERSION \
     tzdata \
     proftpd-mod_sftp \
-    openssh-keygen \
-    python3 py3-bcrypt
+    openssh-keygen 
 
 # Add default user
 ARG FTP_USER=ftp_user
 ARG FTP_PASS=ftp_user
-ARG FTP_UID=1000
-ARG FTP_GID=1000
 RUN addgroup -g $FTP_GID -S $FTP_USER && \
     adduser -h /var/lib/ftp -G $FTP_USER -D -H -u $FTP_UID $FTP_USER && \
+    echo adduser -h /var/lib/ftp -G $FTP_USER -D -H -u $FTP_UID $FTP_USER && \
     echo "$FTP_USER:$FTP_PASS" | chpasswd
 
 VOLUME /etc/proftpd/conf.d /etc/proftpd/modules.d /var/lib/ftp /etc/ssh
 EXPOSE 21 $SFTP_PORT $PASV_MIN_PORT-$PASV_MAX_PORT
 
+ENV USER_NAME=$FTP_USER
+ENV USER_ROOT=/var/lib/ftp/$FTP_USER
 USER root
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

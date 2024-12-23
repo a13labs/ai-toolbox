@@ -23,7 +23,7 @@ function ftp_server_create {
     IP_ADDRESS=$(hostname -I | cut -d' ' -f1)
     if ! podman container exists ftp_server; then
         echo "Creating ftp_server container"
-        podman container create --userns=keep-id -v $TARGET_FOLDER:/var/lib/ftp/$FTP_USER:Z \
+        podman container create --userns=keep-id -v $TARGET_FOLDER:/var/lib/ftp:Z \
                     -e PASV_ADDRESS=$IP_ADDRESS \
                     -p 20021:21 -p 30091-30100:30091-30100 \
                     --security-opt=label=disable --name ftp_server $FTP_SERVER_IMAGE

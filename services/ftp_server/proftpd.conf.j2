@@ -35,3 +35,19 @@ Umask                   {{ LOCAL_UMASK }}
     {{ ANON_UPLOAD_ENABLE }}
   </Limit>
 </Anonymous>
+
+  <Limit LOGIN>
+    AllowUser {{ USER_NAME }}
+    DenyAll
+  </Limit>
+
+<Directory /var/lib/ftp/*>
+    <Limit ALL>
+      AllowUser  {{ USER_NAME }}
+      DenyAll
+    </Limit>
+
+    <Limit STOR>
+      AllowAll
+    </Limit>
+</Directory>

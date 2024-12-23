@@ -50,6 +50,8 @@ sed -i \
     -e "s+{{ SERVER_NAME }}+$SERVER_NAME+" \
     -e "s:{{ TIMES_GMT }}:$TIMES_GMT:" \
     -e "s:{{ WRITE_ENABLE }}:$WRITE_ENABLE:" \
+    -e "s:{{ USER_NAME }}:$USER_NAME:" \
+    -e "s:{{ USER_ROOT }}:$USER_ROOT:" \
     /etc/proftpd/proftpd.conf
 
 exec proftpd --nodaemon -c /etc/proftpd/proftpd.conf
