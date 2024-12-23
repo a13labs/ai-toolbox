@@ -1,9 +1,14 @@
-STABLE_DIFFUSION_WEBUI_IMAGE="localhost/stable-diffusion-webui:latest"
+if [ -z "$DATADIR" ] || [ -z "$BUILDDIR" ]; then
+    echo "DATADIR or BUILDDIR must be set"
+    exit 1
+fi
+
+STABLE_DIFFUSION_WEBUI_IMAGE=${STABLE_DIFFUSION_WEBUI_IMAGE:-"localhost/stable_diffusion_webui:latest"}
 
 function stable_diffusion_webui_build {
     if ! podman image exists $STABLE_DIFFUSION_WEBUI_IMAGE; then
         echo "Building stable_diffusion_webui"
-        podman build --force-rm --tag $STABLE_DIFFUSION_WEBUI_IMAGE $1
+        podman build --force-rm --tag $STABLE_DIFFUSION_WEBUI_IMAGE $BUILDDIR/stable_diffusion_webui
     fi
 }
 

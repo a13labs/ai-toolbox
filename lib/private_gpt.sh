@@ -1,9 +1,14 @@
-PRIVATE_GPT_IMAGE="localhost/private_gpt:latest"
+if [ -z "$DATADIR" ] || [ -z "$BUILDDIR" ]; then
+    echo "DATADIR or BUILDDIR must be set"
+    exit 1
+fi
+
+PRIVATE_GPT_IMAGE=${PRIVATE_GPT_IMAGE:-"localhost/private_gpt:latest"}
 
 function private_gpt_build {
     if ! podman image exists $PRIVATE_GPT_IMAGE; then
         echo "Building private_gpt"
-        podman_build $PRIVATE_GPT_IMAGE $1
+        podman_build $PRIVATE_GPT_IMAGE $BUILDDIR/private_gpt
     fi
 }
 

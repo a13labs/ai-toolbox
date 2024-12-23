@@ -6,28 +6,32 @@
 # Usage: ./ollam.sh [start|stop|clean|restart|download|log]
 
 SCRIPTDIR=$(dirname $0)
-DATADIR=${OLLAMA_DATA_DIR:-$(realpath $SCRIPTDIR/../data)}
-BUILDDIR=$(realpath $SCRIPTDIR/../services/stable_diffusion_webui)
-DOWNLOAD_BUILDDIR=$(realpath $SCRIPTDIR/../services/downloader_tool)
 LIBDIR=$(realpath $SCRIPTDIR/../lib)
 
+source $LIBDIR/bootstrap.sh
 source $LIBDIR/utils.sh
 source $LIBDIR/stable_diffusion.sh
 source $LIBDIR/downloader_tool.sh
+source $LIBDIR/ftp_server.sh
 
 function start_action {
     podman_network_setup stable_diffusion
-    stable_diffusion_webui_build $BUILDDIR
+    stable_diffusion_webui_build 
+    ftp_server_build 
     stable_diffusion_webui_create
+    ftp_server_create ${DATADIR}/stable_diffusion
     stable_diffusion_webui_start
+    ftp_server_start
 }
 
 function stop_action {
     stable_diffusion_webui_stop
+    ftp_server_stop
 }
 
 function clean_action {
     stable_diffusion_webui_clean
+    ftp_server_clean
     podman_network_clean stable_diffusion
 }
 

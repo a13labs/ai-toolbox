@@ -1,4 +1,9 @@
-OLLAMA_IMAGE="ollama/ollama:latest"
+if [ -z "$DATADIR" ]; then
+    echo "DATADIR is not set"
+    exit 1
+fi
+
+OLLAMA_IMAGE=${OLLAMA_IMAGE:-"ollama/ollama:latest"}
 
 function ollama_create_dirs {
     mkdir -p $DATADIR/ollama

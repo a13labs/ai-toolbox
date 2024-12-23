@@ -6,9 +6,9 @@
 # Usage: ./ollam.sh [start|stop|clean|restart|pull|list|log]
 
 SCRIPTDIR=$(dirname $0)
-DATADIR=${OLLAMA_DATA_DIR:-$(realpath $SCRIPTDIR/../data)}
 LIBDIR=$(realpath $SCRIPTDIR/../lib)
 
+source $LIBDIR/bootstrap.sh
 source $LIBDIR/utils.sh
 source $LIBDIR/ollama.sh
 

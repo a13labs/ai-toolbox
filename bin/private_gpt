@@ -6,10 +6,9 @@
 # Usage: ./private_gpt.sh [start|stop|clean|restart|console]
 
 SCRIPTDIR=$(dirname $0)
-DATADIR=${PRIVATE_GPT_DATA_DIR:-$(realpath $SCRIPTDIR/../data)}
-BUILDDIR=$(realpath $SCRIPTDIR/../services/private_gpt)
 LIBDIR=$(realpath $SCRIPTDIR/../lib)
 
+source $LIBDIR/bootstrap.sh
 source $LIBDIR/utils.sh
 source $LIBDIR/ollama.sh
 source $LIBDIR/private_gpt.sh
@@ -28,7 +27,7 @@ function start_action {
         ollama_pull nomic-embed-text
     fi    
 
-    private_gpt_build $BUILDDIR    
+    private_gpt_build 
     private_gpt_create
     private_gpt_start
 }

@@ -1,10 +1,14 @@
-DOWNLOADER_TOOL_IMAGE="localhost/downloader-tool:latest"
+if [ -z "$DATADIR" ] || [ -z "$BUILDDIR" ]; then
+    echo "DATADIR or BUILDDIR must be set"
+    exit 1
+fi
 
+DOWNLOADER_TOOL_IMAGE=${DOWNLOADER_TOOL_IMAGE:-"localhost/downloader_tool:latest"}
 
 function downloader_tool_build {
     if ! podman image exists $DOWNLOADER_TOOL_IMAGE; then
         echo "Building downloader_tool"
-        podman build --force-rm --tag $DOWNLOADER_TOOL_IMAGE $1
+        podman build --force-rm --tag $DOWNLOADER_TOOL_IMAGE $BUILDDIR/downloader_tool
     fi
 }
 
