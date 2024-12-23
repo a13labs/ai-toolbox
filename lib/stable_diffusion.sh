@@ -4,6 +4,7 @@ if [ -z "$DATADIR" ] || [ -z "$BUILDDIR" ]; then
 fi
 
 STABLE_DIFFUSION_WEBUI_IMAGE=${STABLE_DIFFUSION_WEBUI_IMAGE:-"localhost/stable_diffusion_webui:latest"}
+NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:-"all"}
 
 function stable_diffusion_webui_build {
     if ! podman image exists $STABLE_DIFFUSION_WEBUI_IMAGE; then
@@ -28,8 +29,9 @@ function stable_diffusion_webui_create {
                     -v ${DATADIR}/stable_diffusion:/data:U \
                     -v ${DATADIR}/stable_diffusion/output:/output:U \
                     -e CLI_ARGS="--allow-code --enable-insecure-extension-access --api" \
+                    -e NVIDIA_VISIBLE_DEVICES=$NVIDIA_VISIBLE_DEVICES \
                     -p 0.0.0.0:7860:7860 --network stable_diffusion \
-                    --device nvidia.com/gpu=all --security-opt=label=disable \
+                    --device nvidia.com/gpu=$NVIDIA_VISIBLE_DEVICES --security-opt=label=disable \
                     --name stable_diffusion_webui $STABLE_DIFFUSION_WEBUI_IMAGE
         if [ $? -ne 0 ]; then
             echo "Failed to create stable_diffusion_webui container"
