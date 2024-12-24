@@ -54,4 +54,9 @@ sed -i \
     -e "s:{{ USER_ROOT }}:$USER_ROOT:" \
     /etc/proftpd/proftpd.conf
 
+# Add default user
+addgroup -g $FTP_GID -S $FTP_USER
+adduser -h /var/lib/ftp -G $FTP_USER -D -H -u $FTP_UID $FTP_USER 
+echo "$FTP_USER:$FTP_PASS" | chpasswd
+
 exec proftpd --nodaemon -c /etc/proftpd/proftpd.conf

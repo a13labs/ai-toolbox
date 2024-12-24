@@ -1,0 +1,49 @@
+#!/bin/bash
+
+source $(realpath $(dirname $0)/../lib)/bootstrap.sh
+
+include apps/trellis.sh
+
+case $1 in
+    exec)
+        shift
+        trellis_exec $@
+        ;;
+    logs)
+        shift
+        trellis_logs $@
+        ;;
+    start)
+        trellis_run
+        ;;
+    stop)
+        trellis_stop
+        ;;
+    clean)
+        trellis_stop
+        trellis_clean
+        ;;
+    build)
+        shift
+        trellis_build $@
+        ;;
+    status)
+        if trellis_is_running; then
+            log_info "trellis is running"
+            exit 0
+        else
+            log_info "trellis is not running"
+            exit 1
+        fi
+        ;;
+    restart)
+        trellis_stop
+        trellis_run
+        ;;
+    *)
+        echo "Usage: $(basename $0) [start|stop|clean|restart|log|exec|status]"
+        exit 1
+        ;;
+esac
+
+exit 0

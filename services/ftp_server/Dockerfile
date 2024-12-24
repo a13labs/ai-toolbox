@@ -18,7 +18,9 @@ ENV ALLOW_OVERWRITE=on \
     SERVER_NAME=ProFTPD \
     TIMES_GMT=off \
     TZ=UTC \
-    WRITE_ENABLE=AllowAll
+    WRITE_ENABLE=AllowAll \
+    FTP_USER=ftp_user \
+    FTP_PASS=ftp_user
 
 COPY proftpd.conf.j2 /etc/proftpd/proftpd.conf
 COPY generate_user.py /usr/local/bin/
@@ -32,14 +34,6 @@ RUN chmod 644 /etc/proftpd/proftpd.conf && \
     tzdata \
     proftpd-mod_sftp \
     openssh-keygen 
-
-# Add default user
-ARG FTP_USER=ftp_user
-ARG FTP_PASS=ftp_user
-RUN addgroup -g $FTP_GID -S $FTP_USER && \
-    adduser -h /var/lib/ftp -G $FTP_USER -D -H -u $FTP_UID $FTP_USER && \
-    echo adduser -h /var/lib/ftp -G $FTP_USER -D -H -u $FTP_UID $FTP_USER && \
-    echo "$FTP_USER:$FTP_PASS" | chpasswd
 
 VOLUME /etc/proftpd/conf.d /etc/proftpd/modules.d /var/lib/ftp /etc/ssh
 EXPOSE 21 $SFTP_PORT $PASV_MIN_PORT-$PASV_MAX_PORT

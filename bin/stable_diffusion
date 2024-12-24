@@ -1,108 +1,59 @@
 #!/bin/bash
 
-# Build ollama (CUDA) and run it with podman for a specific LLM model
-# Requires podman, nvidia-container-toolkit, jq and python3
+source $(realpath $(dirname $0)/../lib)/bootstrap.sh
 
-# Usage: ./ollam.sh [start|stop|clean|restart|download|log]
+include apps/stable_diffusion.sh
 
-SCRIPTDIR=$(dirname $0)
-LIBDIR=$(realpath $SCRIPTDIR/../lib)
-
-source $LIBDIR/bootstrap.sh
-source $LIBDIR/utils.sh
-source $LIBDIR/stable_diffusion.sh
-source $LIBDIR/downloader_tool.sh
-source $LIBDIR/ftp_server.sh
-
-function start_action {
-    podman_network_setup stable_diffusion
-    stable_diffusion_webui_build 
-    ftp_server_build 
-    stable_diffusion_webui_create
-    ftp_server_create ${DATADIR}/stable_diffusion
-    stable_diffusion_webui_start
-    ftp_server_start
-}
-
-function stop_action {
-    stable_diffusion_webui_stop
-    ftp_server_stop
-}
-
-function clean_action {
-    stable_diffusion_webui_clean
-    ftp_server_clean
-    podman_network_clean stable_diffusion
-}
-
-function restart_action {
-    stop_action
-    start_action
-}
-
-function help_action {
-    echo "Usage: $(basename $0) [start|stop|clean|restart|download|log]"
-}
-
-function download_action {
-    MODEL_NAME=$1
-    SOURCE_URL=$2
-    CHECKSUM=$3
-
-    downloader_tool_build $DOWNLOAD_BUILDDIR
-    
-    if [ -z $SOURCE_URL ] || [ -z $MODEL_NAME ] ; then
-        echo "Usage: $(basename $0) download <source_url> <model_name> [<checksum>]"
-        exit 1
-    fi
-
-    mkdir -p ${DATADIR}/stable_diffusion/models/$MODEL_NAME
-    downloader_tool_download $SOURCE_URL ${DATADIR}/stable_diffusion/models/$MODEL_NAME $CHECKSUM
-}
-
-ACTION=$1
-
-if [ -z $ACTION ]; then
-    help_action
-    exit 1
-fi
-
-validate_requirements
-stable_diffusion_webui_create_dirs
-
-case $ACTION in
+case $1 in
+    exec)
+        shift
+        stable_diffusion_exec $@
+        ;;
+    logs)
+        shift
+        stable_diffusion_logs $@
+        ;;
+    start)
+        stable_diffusion_run
+        ;;
+    stop)
+        stable_diffusion_stop
+        ;;
+    clean)
+        stable_diffusion_stop
+        stable_diffusion_clean
+        ;;
+    build)
+        shift
+        stable_diffusion_build $@
+        ;;
+    status)
+        if stable_diffusion_is_running; then
+            log_info "stable_diffusion is running"
+            exit 0
+        else
+            log_info "stable_diffusion is not running"
+            exit 1
+        fi
+        ;;
+    restart)
+        stable_diffusion_stop
+        stable_diffusion_run
+        ;;
     download)
-        if [ -f $2 ]; then
+        shift
+        if [ -f $1 ]; then
             while IFS= read -r line
             do
                 IFS=' ' read -r -a array <<< "$line"
-                download_action ${array[0]} ${array[1]} ${array[2]}
-            done < $2
+                stable_diffusion_download_model ${array[0]} ${array[1]} ${array[2]}
+            done < $1
         else
-            download_action $2 $3 $4
+            stable_diffusion_download_model $1 $2 $3
         fi
         ;;
-    log)
-        stable_diffusion_webui_log $2
-        ;;
-    start)
-        start_action
-        ;;
-    stop)
-        stop_action
-        ;;
-    clean)
-        stop_action
-        clean_action
-        ;;
-    restart)
-        stop_action
-        start_action
-        ;;
-    log)
-        ;;
     *)
-        help_action
+        echo "Usage: $(basename $0) [start|stop|clean|restart|download|log|exec|status]"
         exit 1
         ;;
 esac
