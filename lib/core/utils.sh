@@ -23,15 +23,15 @@ function validate_requirements {
         exit 1
     fi
 
-    if [ ! -f /etc/cdi/nvidia.yaml ]; then
-        log_info "generating nvidia-container-toolkit configuration"
-        sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
-    fi
-    log_debug "nvidia-container-toolkit configuration: %s" $(cat /etc/cdi/nvidia.yaml)
-
-    # Check if nvidia-container-toolkit is installed and configured
     podman run --rm --device nvidia.com/gpu=all --security-opt=label=disable ubuntu nvidia-smi > /dev/null
     if [ $? -ne 0 ]; then
+        log_info "generating nvidia-container-toolkit configuration"
+        sudo /usr/bin/rm /etc/cdi/nvidia.yaml
+        sudo /usr/bin/nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
+        if [ $? -ne 0 ]; then
+            log_err "failed to generate nvidia-container-toolkit configuration"
+            exit 1
+        fi
         GPU_COUNT=$(podman run --rm --device nvidia.com/gpu=all --security-opt=label=disable ubuntu nvidia-smi --query-gpu=count --format=csv,noheader | tail -n 1)
         log_debug "GPU_COUNT: %s" $GPU_COUNT
         if [ $GPU_COUNT -eq 0 ]; then
@@ -39,4 +39,5 @@ function validate_requirements {
             exit 1
         fi
     fi
+    log_debug "nvidia-container-toolkit configuration: %s" $(cat /etc/cdi/nvidia.yaml)
 }
