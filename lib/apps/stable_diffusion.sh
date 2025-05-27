@@ -92,7 +92,7 @@ function stable_diffusion_download_model {
     checksum=$3
     
     if [ -z $source_url ] || [ -z $model_name ] ; then
-        echo "Usage: $(basename $0) download <source_url> <model_name> [<checksum>]"
+        echo "Usage: $(basename $0) download <model_name> <source_url> [<checksum>]"
         exit 1
     fi
 

@@ -1,0 +1,15 @@
+source $(realpath $(dirname $0)/../lib)/bootstrap.sh
+
+include tools/downloader_tool.sh
+
+target_folder=$1
+shift
+
+if [ -z "$target_folder" ]; then
+    echo "Usage: $(basename $0) <target_folder> [aria2c options]"
+    exit 1
+fi
+
+mkdir -p "$target_folder"
+ 
+downloader_tool_run $target_folder aria2c --out /target_folder "$@"

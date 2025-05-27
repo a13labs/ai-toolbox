@@ -1,0 +1,83 @@
+#!/bin/bash
+
+source $(realpath $(dirname $0)/../lib)/bootstrap.sh
+
+include apps/comfyui.sh
+
+case $1 in
+    exec)
+        shift
+        comfyui_exec $@
+        ;;
+    logs)
+        shift
+        comfyui_logs $@
+        ;;
+    start)
+        comfyui_run
+        ;;
+    stop)
+        comfyui_stop
+        ;;
+    clean)
+        comfyui_stop
+        comfyui_clean
+        ;;
+    build)
+        shift
+        comfyui_build $@
+        ;;
+    status)
+        if comfyui_is_running; then
+            log_info "comfyui is running"
+            exit 0
+        else
+            log_info "comfyui is not running"
+            exit 1
+        fi
+        ;;
+    restart)
+        comfyui_stop
+        comfyui_run
+        ;;
+    download)
+        shift
+        case $1 in
+            model)
+                shift
+                if [ -f $1 ]; then
+                    while IFS= read -r line
+                    do
+                        IFS=' ' read -r -a array <<< "$line"
+                        comfyui_download_model ${array[0]} ${array[1]} ${array[2]}
+                    done < $1
+                else
+                    comfyui_download_model $1 $2 $3
+                fi
+                ;;
+            custom_node)
+                shift
+                if [ -f $1 ]; then
+                    while IFS= read -r line
+                    do
+                        IFS=' ' read -r -a array <<< "$line"
+                        comfyui_download_custom_node ${array[0]} ${array[1]}
+                    done < $1
+                else
+                    comfyui_download_custom_node $1 $2
+                fi
+                ;;
+            *)
+                echo "Usage: $(basename $0) download model <model_name> <model_type> <model_url>"
+                echo "Usage: $(basename $0) download custom_node <git repo>"
+                exit 1
+                ;;
+        esac
+        ;;
+    *)
+        echo "Usage: $(basename $0) [start|stop|clean|restart|download|exec|logs|build|status]"
+        exit 1
+        ;;
+esac
+
+exit 0

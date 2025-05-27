@@ -1,0 +1,17 @@
+source $(realpath $(dirname $0)/../lib)/bootstrap.sh
+
+include tools/downloader_tool.sh
+
+target_folder=$1
+if [ -z "$target_folder" ]; then
+    echo "Usage: $(basename $0) <target_folder> <repo_id> [hfd options]"
+    return
+fi
+
+mkdir -p "$target_folder"
+
+shift
+repo_id=$1
+shift
+
+downloader_tool_run $target_folder hfd $repo_id --local-dir /target_folder "$@"

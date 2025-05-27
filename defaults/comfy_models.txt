@@ -1,0 +1,10 @@
+photon_v1.safetensors checkpoints https://huggingface.co/digiplay/Photon_v1/resolve/main/photon_v1.safetensors
+vae-ft-mse-840000-ema-pruned.safetensors vae https://huggingface.co/stabilityai/sd-vae-ft-mse-original/resolve/main/vae-ft-mse-840000-ema-pruned.safetensors
+taesd_decoder.pth vae_approx https://raw.githubusercontent.com/madebyollin/taesd/main/taesd_decoder.pth
+taesdxl_decoder.pth vae_approx https://raw.githubusercontent.com/madebyollin/taesd/main/taesdxl_decoder.pth
+taesd3_decoder.pth vae_approx https://raw.githubusercontent.com/madebyollin/taesd/main/taesd3_decoder.pth
+taef1_decoder.pth vae_approx https://raw.githubusercontent.com/madebyollin/taesd/main/taef1_decoder.pth
+RealESRGAN_x4plus.pth upscale_models https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth
+RealESRGAN_x4plus_anime_6B.pth upscale_models https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.2.4/RealESRGAN_x4plus_anime_6B.pth
+easynegative.safetensors embeddings https://huggingface.co/datasets/gsdf/EasyNegative/resolve/main/EasyNegative.safetensors
+ng_deepnegative_v1_75t.pt embeddings https://huggingface.co/lenML/DeepNegative/resolve/main/NG_DeepNegative_V1_75T.pt

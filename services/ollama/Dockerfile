@@ -1,4 +1,4 @@
-FROM ollama/ollama:0.5.4
+FROM ollama/ollama:0.7.1
 
 ARG UID=1000
 ARG GID=1000

@@ -1,0 +1,5 @@
+source $(realpath $(dirname $0)/../lib)/bootstrap.sh
+
+include tools/downloader_tool.sh
+
+downloader_tool_build $@

@@ -14,7 +14,11 @@ _DOWNLOADER_TOOL_VERSION_=$(read_config ".tools.download_tool.version" "latest")
 _DOWNLOADER_TOOL_IMAGE_=$_DOWNLOADER_TOOL_REPO_:$_DOWNLOADER_TOOL_VERSION_
 
 function downloader_tool_build {
-    podman_build $_DOWNLOADER_TOOL_IMAGE_ $_BUILDDIR_/downloader_tool
+    podman_build $_DOWNLOADER_TOOL_IMAGE_ $_BUILDDIR_/downloader_tool $@
+    if [ $? -ne 0 ]; then
+        log_err "failed to build/pull downloader_tool image"
+        exit 1
+    fi
 }
 
 function downloader_tool_run {
@@ -37,7 +41,7 @@ function downloader_tool_download {
     local checksum=$3
     mkdir -vp $target_folder
     log_info "Downloading from %s to %s" $source_url $target_file
-    downloader_tool_run $target_folder aria2c -x 10 --disable-ipv6 $source_url --dir /target_folder --out $target_file --continue
+    downloader_tool_run $target_folder aria2c -x 10 --disable-ipv6 --dir /target_folder --out $target_file --continue $source_url 
     if [ $? -ne 0 ]; then
         log_err "Failed to download %s" $source_url
         exit 1
