@@ -21,7 +21,7 @@ case $1 in
         ;;
     clean)
         ollama_stop
-        olama_clean
+        ollama_clean
         ;;
     build)
         shift

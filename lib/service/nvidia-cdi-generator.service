@@ -1,0 +1,21 @@
+[Unit]
+Description=NVIDIA: Regenerate NVIDIA CDI configuration at boot
+After=local-fs.target network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+
+# This line replicates the logging intent from your script. Output goes to journald.
+ExecStartPre=/bin/sh -c "echo 'nvidia-cdi-generator: regenerating nvidia-container-toolkit configuration' >&2"
+# Remove the existing configuration file (ignore error if it doesn't exist)
+ExecStartPre=-/usr/bin/rm -f /etc/cdi/nvidia.yaml
+# Generate the new configuration file
+ExecStart=/usr/bin/nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
